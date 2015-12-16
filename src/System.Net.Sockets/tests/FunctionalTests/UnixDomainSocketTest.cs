@@ -69,7 +69,6 @@ namespace System.Net.Sockets.Tests
             complete.Dispose();
             sock.Dispose();
             server.Dispose();
-
         }
 
         [Fact]
@@ -93,7 +92,7 @@ namespace System.Net.Sockets.Tests
                 complete.WaitOne();
             }
 
-            AssertHostNotFoundOrNoData(args);
+            AssertSocketError(args, SocketError.SocketError);
 
             complete.Dispose();
             sock.Dispose();
@@ -114,16 +113,14 @@ namespace System.Net.Sockets.Tests
 
         }
 
-        private static void AssertHostNotFoundOrNoData(SocketAsyncEventArgs args)
+        private static void AssertSocketError(SocketAsyncEventArgs args, SocketError expectedError)
         {
             SocketError errorCode = args.SocketError;
-            Assert.True((errorCode == SocketError.HostNotFound) || (errorCode == SocketError.NoData),
-                "SocketError: " + errorCode);
+            Assert.Equal(expectedError, errorCode);
 
             Assert.True(args.ConnectByNameError is SocketException);
             errorCode = ((SocketException)args.ConnectByNameError).SocketErrorCode;
-            Assert.True((errorCode == SocketError.HostNotFound) || (errorCode == SocketError.NoData),
-                "SocketError " + errorCode);
+            Assert.Equal(expectedError, errorCode);
         }
 
         #region GC Finalizer test
