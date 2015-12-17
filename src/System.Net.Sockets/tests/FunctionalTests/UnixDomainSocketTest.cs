@@ -92,7 +92,7 @@ namespace System.Net.Sockets.Tests
                 complete.WaitOne();
             }
 
-            AssertSocketError(args, SocketError.SocketError);
+            Assert.Equal(SocketError.SocketError, args.SocketError);
 
             complete.Dispose();
             sock.Dispose();
@@ -111,16 +111,6 @@ namespace System.Net.Sockets.Tests
                 }
             }
 
-        }
-
-        private static void AssertSocketError(SocketAsyncEventArgs args, SocketError expectedError)
-        {
-            SocketError errorCode = args.SocketError;
-            Assert.Equal(expectedError, errorCode);
-
-            Assert.True(args.ConnectByNameError is SocketException);
-            errorCode = ((SocketException)args.ConnectByNameError).SocketErrorCode;
-            Assert.Equal(expectedError, errorCode);
         }
 
         #region GC Finalizer test
